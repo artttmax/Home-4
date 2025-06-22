@@ -1,36 +1,27 @@
 using UnityEngine;
-using UnityEngine.Pool;
 
 public class CubeSpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject _prefab;
-    [SerializeField] private GameObject _startPoint;
-    [SerializeField] private float _repeatRate = 0.5f;
-    [SerializeField] private float _spawnAreaSize = 5f;
+    [SerializeField] private CubesPool _cubesPool;
+    [SerializeField] private float _valueAxis = 8f;
+    [SerializeField] private float _yValue = 10f;
 
-    private ObjectPool<GameObject> _pool;
-
-    private void Awake()
-    {
-        _pool = new ObjectPool<GameObject>(
-            createFunc: () => Instantiate(_prefab),
-            actionOnGet: (currentObject) => ActionOnGet(currentObject));         
-    }
-
-    private void ActionOnGet(GameObject currentObject)
-    {
-        currentObject.transform.position = _startPoint.transform.position + new Vector3(Random.Range(-_spawnAreaSize, _spawnAreaSize + 1),0, Random.Range(-_spawnAreaSize, _spawnAreaSize + 1));
-        currentObject.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
-        currentObject.SetActive(true);
-    }
+    private float _spawnInterval = 0.5f;
 
     private void Start()
     {
-        InvokeRepeating(nameof(GetCube), 0.0f, _repeatRate);
+        InvokeRepeating(nameof(SpawnCube), 0.0f, _spawnInterval);
     }
 
-    private void GetCube()
+    private void SpawnCube()
     {
-        _pool.Get();
+        Cube cube = _cubesPool.GetCube();
+
+        cube.transform.position = DetermineSpawnPoints();
+    }
+
+    private Vector3 DetermineSpawnPoints()
+    {
+        return new Vector3(Random.Range(-_valueAxis, _valueAxis + 1), _yValue, Random.Range(-_valueAxis, _valueAxis + 1));
     }
 }

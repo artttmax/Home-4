@@ -1,16 +1,25 @@
 using UnityEngine;
 
-[RequireComponent (typeof(Renderer))]
+[RequireComponent(typeof(Renderer))]
 public class ColorChanger : MonoBehaviour
 {
-    private bool isColorChanged = false;
+    private Color DefaultColor;
+
+    private Renderer _cubeRenderer;
+
+    private void Awake()
+    {
+        _cubeRenderer = GetComponent<Renderer>();
+        DefaultColor = _cubeRenderer.material.color;
+    }
+
+    public void BackToInitialColor()
+    {
+        _cubeRenderer.material.color = DefaultColor;
+    }
 
     public void ChangeColor()
     {
-        if (isColorChanged == false)
-        {
-            gameObject.GetComponent<Renderer>().material.color = new Color(0, 1, 0);
-            isColorChanged = true;
-        }
+        _cubeRenderer.material.color = new Color(Random.value, Random.value, Random.value);
     }
 }
